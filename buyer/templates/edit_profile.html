@@ -1,0 +1,94 @@
+{% extends 'base_0.html' %}
+{% load static %}
+
+{% block content %}
+
+<form action="{% url 'edit_profile' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{massage}}
+    <section class="h-100 bg-dark">
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col">
+              <div class="card card-registration my-4">
+                <div class="row g-0">
+                  <div class="col-xl-6 d-none d-xl-block">
+                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/img4.webp"
+                      alt="Sample photo" class="img-fluid"
+                      style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;" />
+                  </div>
+                  <div class="col-xl-6">
+                    <div class="card-body p-md-5 text-black">
+                      <h3 class="mb-5 text-uppercase">Edit Profile</h3>
+      
+                      <div class="row">
+                        <div class="col-md-12 mb-4">
+                          <div class="form-outline">
+                            <input type="text" id="form3Example1m" name="f_name"  class="form-control form-control-lg" value="{{user_obj.first_name}}"/>
+                            <label class="form-label" for="form3Example1m">First name</label>
+                          </div>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                          <div class="form-outline">
+                            <input type="text" id="form3Example1n" name="l_name"   class="form-control form-control-lg" value="{{user_obj.last_name}}"/>
+                            <label class="form-label" for="form3Example1n">Last name</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12 mb-4">
+                        <div class="form-outline">
+                          <input type="text" id="form3Example1n" name="address"  class="form-control form-control-lg" value="{{user_obj.address}}"/>
+                          <label class="form-label" for="form3Example1n">Address</label>
+                        </div>
+                      </div>
+                     
+                      <div class="col-md-12 mb-4" >
+                        <div class="form-outline">
+                          <input type="text" name="contact" id="form3Example1n" class="form-control form-control-lg" value="{{user_obj.mobile}}" />
+                          <label class="form-label" for="form3Example1n">Mobile</label>
+                        </div>
+                      </div>
+                      <div class="col-md-12 mb-4">
+                        <div class="form-outline">
+                          <input type="File" name="pic" id="form3Example1n" class="form-control form-control-lg" value="{{user_obj.pic.url}}"/>
+                          <label class="form-label" for="form3Example1n">Picture</label>
+                        </div>
+                      </div>
+                      <div class="col-md-12 mb-4">
+                        <div class="form-outline">
+                          <input type="date" name="dob" id="form3Example1n" class="form-control form-control-lg" value="{{user_obj.dob}}" />
+                          <label class="form-label" for="form3Example1n">DOB</label>
+                        </div>
+                      </div>
+                      <div class="col-md-12 mb-4">
+                        <div class="form-outline">
+                          <label class="form-label" for="form3Example1n">Gender</label>  <br>
+                          <input type="radio"  name="gender" value="Male"/>  Male <br>
+                          <input type="radio"  name="gender" value="Female"/>  Female <br>
+                          <input type="radio"  name="gender" value="Other"/>  Other <br>
+                          
+                          
+                        </div>
+                      </div>
+                      
+
+                    <div class="offset-6 col-md-6 mb-4 text-right">
+                        <div class="d-flex justify-content-end pt-3">
+                           
+                            <button type="submit" class="btn btn-warning btn-lg ms-2">SAVE</button>
+                        </div>
+                    </div>
+                      
+      
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+</form>
+
+
+{% endblock %}
