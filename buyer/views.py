@@ -1,9 +1,13 @@
-from django.shortcuts import render,redirect,HttpResponse
+from django.shortcuts import render,redirect
+from django.http import HttpResponse
 from .models import Buyer,Cart
 from django.core.mail import send_mail
 import random
 from django.conf import settings
 from seller.models import Product
+import razorpay
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseBadRequest
 
 # Create your views here.
 
@@ -176,9 +180,9 @@ def add_to_cart(request,pk):
     try:
         Cart.objects.create(
             product = Product.objects.get(id = pk),
-            buyer = Buyer.objects.get(email = request.session["email"]),
-            quantity = request.GET[str(pk)]
-            ## create a integer field in html page of Buyer's product div and 
+            buyer  = Buyer.objects.get(email = request.session["email"]),
+            
+            ## create a integer field in htmlhttp://127.0.0.1:8000/ page of Buyer's product div and 
             ## create an a quantity field in MODELS.py :)
         )
         return redirect('index')
@@ -188,15 +192,130 @@ def add_to_cart(request,pk):
     except:
         return HttpResponse("Internal server ERROR:")                   
 
-#  try:
-#         Cart.objects.create(
-#             product = Product.objects.get(id = pk),
-#             buyer = Buyer.objects.get(email = request.session['email']),
-#             quantity = request.GET[str(pk)]
-#         )
-#         return redirect('index')
-#     except KeyError:
-#         return render(request, 'login.html')
-#     except:
-#         return render(request, '500.html')
+
+
+
+def drop_cart_product(request,pk):
+    del_product = Cart.objects.get(id = pk)
+    del_product.delete()
+    user_obj = Buyer.objects.get(email = request.session["email"])
+    cart_product = Cart.objects.filter(buyer = user_obj)
+    return render(request,"checkout.html",{"user_obj":user_obj,"cart_product":cart_product, "total_item":len(cart_product)})
+
+
+
+
+def checkout(request):
+    if request.method == "GET":
+        return render(request,"checkout.html")
+
+    else:
+        user_obj = Buyer.objects.get(email = request.session["email"])
+        cart_product = Cart.objects.filter(buyer = user_obj)
+        return render(request,"checkout.html",{"user_obj":user_obj, 'cart_product':cart_product, "total_item":len(cart_product)})
+
+
+
+
+
+
+
+
+razorpay_client = razorpay.Client(
+    auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
+ 
+ 
+def make_payment(request):
+
+    # /
+    # //
+    # /
+    # /
+    # /
+    # /
+    user_obj = Buyer.objects.get(email = request.session['email'])
+
     
+    #updating quantity from cart page
+    session_cart_product = Cart.objects.filter(buyer = user_obj)
+    for single_item in session_cart_product: #[fan, ac, fon, tv]
+        single_item.quantity = int(request.POST["qua"])
+        single_item.save()
+
+    #calculating total price to pay
+    cart_product = Cart.objects.filter(buyer = user_obj)
+    total_price = 0
+    for item in cart_product:
+        total_price += item.product.price * int(request.POST["qua"])
+
+
+    #razorpay stuff
+    currency = 'INR'
+    global amount
+    amount = total_price * 100  # Rs. 200
+ 
+    # Create a Razorpay Order
+    razorpay_order = razorpay_client.order.create(dict(amount=amount,
+                                                       currency=currency,
+                                                       payment_capture='0'))
+ 
+    # order id of newly created order.
+    razorpay_order_id = razorpay_order['id']
+    callback_url = 'paymenthandler/'
+ 
+    # we need to pass these details to frontend.
+    context = {}
+    context['razorpay_order_id'] = razorpay_order_id
+    context['razorpay_merchant_key'] = settings.RAZOR_KEY_ID
+    context['razorpay_amount'] = amount
+    context['currency'] = currency
+    context['callback_url'] = callback_url
+    context['cart_product'] = cart_product
+    context['total_price'] = total_price
+    return render(request, 'payment.html', context=context)
+ 
+ 
+
+
+@csrf_exempt
+def paymenthandler(request):
+        # only accept POST request.
+    if request.method == "POST":
+        try:
+            # get the required parameters from post request.
+            payment_id = request.POST.get('razorpay_payment_id', '')
+            razorpay_order_id = request.POST.get('razorpay_order_id', '')
+            signature = request.POST.get('razorpay_signature', '')
+            params_dict = {
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+            }
+            
+            
+            global amount
+            amount = amount  # Rs. 200
+            try:
+
+                # capture the payemt
+                razorpay_client.payment.capture(payment_id, amount)
+                session_user = Buyer.objects.get(email = request.session['email'])
+                cart_product =  Cart.objects.filter(buyer = session_user)
+                for i in cart_product:
+                    i.delete()
+                # render success page on successful caputre of payment
+                return render(request, 'success.html')
+            except:
+
+                # if there is an error while capturing payment.
+                return render(request, 'fail.html')
+            
+        except:
+ 
+            # if we don't find the required parameters in POST data
+            # return HttpResponseBadRequest()
+            return HttpResponse("sorry")
+    else:
+       # if other than POST request is made.
+        # return HttpResponseBadRequest()
+        return HttpResponse("sorry")

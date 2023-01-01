@@ -23,7 +23,7 @@ class Buyer(models.Model):
 class Cart(models.Model):
     product = models.ForeignKey(Product , on_delete=models.CASCADE)
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(null=True,default=1)
 
     def __str__(self) -> str:
         return self.buyer.first_name

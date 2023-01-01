@@ -187,7 +187,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		</div>
 		<div class="top_nav_right">
 			<div class="wthreecartaits wthreecartaits2 cart cart box_1"> 
-						<form action="#" method="post" class="last"> 
+						<form action="{% url 'checkout' %}" method="post" class="last" enctype="multipart/form-data"> 
+							{% csrf_token %}
 						<input type="hidden" name="cmd" value="_cart">
 						<input type="hidden" name="display" value="1">
 						<button class="w3view-cart" type="submit" name="submit" value=""><i class="fa fa-cart-arrow-down" aria-hidden="true"></i></button>
@@ -526,7 +527,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!--/grids-->
 <!-- /new_arrivals --> 
 
-<form method="" action="" enctype="multipart/form-data">
+<form method="post" action="" enctype="multipart/form-data">
 
 	<div class="new_arrivals_agile_w3ls_info"> 
 		<div class="container">
@@ -556,12 +557,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 											&#8377;	{{ item.dis_price }}
 										</div>
 										<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out button2">
-															<form action="{% url 'add_to_cart' item.id %}" >
+															<form action="{% url 'add_to_cart' item.id %}" enctype="multipart/form-data">
 																{% csrf_token %}
 																<fieldset>
 																	
-																	<input type="hidden" name="{{item.id}}" />
-																	<input type="submit"  value="Add to cart" class="button" />
+																	
+																	<input type="submit" name="{{item.id}}" value="Add to cart" class="button" />
 																	
 																	
 																</fieldset>

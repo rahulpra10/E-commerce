@@ -129,3 +129,6 @@ EMAIL_HOST_USER = "ms.world.wide008@gmail.com"
 EMAIL_HOST_PASSWORD = "ppszojezhvurignf"
 
 
+
+RAZOR_KEY_ID = "rzp_test_cDv4zERSfKFPq6"	
+RAZOR_KEY_SECRET = "301qbOY9cat9fcqgtUnKxf59"
