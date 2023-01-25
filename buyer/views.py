@@ -319,3 +319,9 @@ def paymenthandler(request):
        # if other than POST request is made.
         # return HttpResponseBadRequest()
         return HttpResponse("sorry")
+    
+def page_not_found(request):
+    return render(request,"404.html")
+
+def Interval_server(request):
+    return render(request,"500.html")

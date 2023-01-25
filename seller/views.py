@@ -163,6 +163,11 @@ def add_product(request):
 
 
 
+def page_not_found(request):
+    return render(request,"404.html")
+
+def Internalserver(request):
+    return render(request,"500.html")
 
 
 

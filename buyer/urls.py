@@ -20,4 +20,7 @@ urlpatterns = [
     path("make_payment/",views.make_payment,name="make_payment"),
     path("make_payment/paymenthandler/",views.paymenthandler,name="paymenthandler"), 
     path("drop_cart_product/<int:pk>",views.drop_cart_product,name="drop_cart_product"),
+    path("404/",views.page_not_found ,name="404"),
+    path("500/",views.Interval_server ,name="500")
+         
 ]

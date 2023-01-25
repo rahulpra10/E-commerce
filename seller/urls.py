@@ -9,6 +9,7 @@ urlpatterns = [
     path("seller_edit_profile/",views.seller_edit_profile,name="seller_edit_profile"),
     path("seller_logout/",views.seller_logout,name="seller_logout"),
     path("add_product/",views.add_product,name="add_product"),
-    
+    path("page_not_found/",views.page_not_found,name="page_not_found"),
+    path("500/",views.Internalserver,name="500")
     
 ]
